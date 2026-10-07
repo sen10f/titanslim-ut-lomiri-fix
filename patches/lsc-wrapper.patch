@@ -1,0 +1,24 @@
+--- a/usr/share/halium-overlay/usr/share/ubuntu-touch-session/lsc-wrapper
++++ b/usr/share/halium-overlay/usr/share/ubuntu-touch-session/lsc-wrapper
+@@ -21,7 +21,8 @@
+ # so that it doesn't crash.
+ # This lib is usually installed on Hybris devices. If not, Glibc will complain
+ # but will continue.
+-export LD_PRELOAD=libtls-padding.so
++# libglshim: Mali returns NULL from glGetString without a current context; LSC then aborts
++export LD_PRELOAD="libtls-padding.so libglshim.so"
+ 
+ # FIXME: this is done primarily to prevent collision with root's user session.
+ # This should be done by LightDM when it properly support system compositor
+@@ -29,6 +30,11 @@
+ export XDG_RUNTIME_DIR=/run
+ export WAYLAND_DISPLAY=wayland-syscomp
+ 
++# lightdm passes --vt N, which is incompatible with --console-provider=none
++_a=""
++while [ $# -gt 0 ]; do case "$1" in --vt) shift; shift;; *) _a="$_a $1"; shift;; esac; done
++set -- $_a
++
+ exec lomiri-system-compositor \
+     $LSC_FLAGS \
+     --console-provider=none \

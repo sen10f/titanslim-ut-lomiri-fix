@@ -1,0 +1,4 @@
+glshim/libglshim.so
+out/
+*.img
+*.img.xz
